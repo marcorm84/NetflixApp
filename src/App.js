@@ -4,14 +4,14 @@ import {
     StyleSheet,
     Text,
     View,
-    ScrollView
+    ScrollView,
 } from 'react-native';
 import SideMenu from 'react-native-side-menu'
-
 import List from './components/List'
 import Slide from './components/Slider'
 import Header from './components/Header'
 import Menu from './components/Menu'
+import configureStore from './store'
 
 class App extends Component {
 	constructor(props) {
@@ -20,10 +20,6 @@ class App extends Component {
 			isOpen: false
 		}
 	}
-
-	static navigationOptions = {
-        header: null
- 	}
 	toggle() {
 		this.setState({
 			isOpen: !this.state.isOpen

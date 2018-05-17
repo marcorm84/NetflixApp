@@ -1,15 +1,12 @@
 import data from '../data.json'
+const URL = 'https://api.tvmaze.com/schedule?country=US&date=2017-03-13'
+
 
 export function getAll() {
 	return data
 }
 
-function getTwoLists(json) {
-	var array = json.slice(0)
-	var val = Math.floor(array.lenght / 2)
-	var newArray = array.splice(0, val)
-
-	return [array, newArray]
+export default () => {
+	return 	fetch(URL)
+				.then(response => Promise.all([response, response.json()]))	
 }
-
-export const getTwoItems = getTwoLists(data)

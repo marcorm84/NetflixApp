@@ -7,43 +7,60 @@ import {
     FlatList,
     Image
 } from 'react-native';
-
-import {getTwoItems} from '../api/api'
+import {connect} from 'react-redux'
+import {fetchData} from '../actions'
 
 class List extends Component {
+	componentWillMount() {
+		this.props.fetchData()
+	}
 
 	_renderItem(item) {
 		const {navigate} = this.props.navigation
 		return (
-			<Image style={{width: 120, height:180}} source={{uri: item.image}}/>
+			<Image style={{width: 120, height:180}} source={{uri: item.show.image.medium}}/>
+		)
+	}
+
+	getTvShows() {
+		const {dataTvMaze} = this.props
+		return (
+			<FlatList
+				horizontal
+				SeparatorComponent={() => <View style={{width: 5}} />}
+				renderItem={({item}) => this._renderItem(item)}
+				data={dataTvMaze.data}
+			/>
 		)
 	}
 
 	render() {
+		const {dataTvMaze} = this.props
 		console.log(this.props)
 		return (
 			<View style={{flex: 1}}>
 				<View>
 					<Text style={styles.text}>My List</Text>
-					<FlatList
-						horizontal
-						SeparatorComponent={() => <View style={{width: 5}} />}
-						renderItem={({item}) => this._renderItem(item)}
-						data={getTwoItems[0]}
-					/>
-				</View>
-				<View>
-					<Text style={styles.text}>Top Picks For You</Text>
-					<FlatList
-						horizontal
-						SeparatorComponent={() => <View style={{width: 5}} />}
-						renderItem={({item}) => this._renderItem(item)}
-						data={getTwoItems[1]}
-					/>
+					{this.props.dataTvMaze.isFetching}
+					{
+						(this.props.dataTvMaze.data.length) ?
+							this.getTvShows()
+						: null
+					}
 				</View>
 			</View>
 
 		)
+	}
+}
+
+const mapStateToProps = state => {
+	return {dataTvMaze: state.dataTvMaze}
+}
+
+const mapDispatchToProps = dispatch => {
+	return {
+		fetchData: () => dispatch(fetchData())
 	}
 }
 
@@ -53,4 +70,4 @@ const styles = StyleSheet.create({
 	}
 })
 
-export default List
+export default connect(mapStateToProps, mapDispatchToProps)(List)

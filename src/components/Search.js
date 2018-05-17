@@ -10,6 +10,8 @@ import {
     FlatList,
     ScrollView
 } from 'react-native';
+import {connect} from 'react-redux'
+import {fetchData} from '../actions'
 
 import {getAll} from '../api/api'
 
@@ -21,17 +23,18 @@ class Search extends Component {
 		this.state = {
 			text: '',
 			data: ''
-		}
+		} 
 	}
+
 
 	static navigationOptions = {
         header: null
  	}
 
 	filter(text) {
-		const data = getAll()
-		const newData = data.filter(function(item) {
-			const itemData = item.name.toUpperCase()
+		const {dataTvMaze} = this.props
+		const newData = dataTvMaze.data.filter(function(item) {
+			const itemData = item.show.name.toUpperCase()
 			const textData = text.toUpperCase()
 
 			return itemData.indexOf(textData) > -1
@@ -46,10 +49,11 @@ class Search extends Component {
 	}
 	_renderItem(item) {
 		return (
-			<Image key={item.key} style={styles.image} source={{uri: item.image}} />
+			<Image style={{width: 120, height:180}} source={{uri: item.show.image.medium}}/>
 		)
 	}
 	render() {
+		const {navigate} = this.props.navigation
 		return (
 			<View style={styles.container}>
 				<View style={styles.header}>
@@ -62,7 +66,7 @@ class Search extends Component {
 					onChangeText={(text) => this.filter(text)}
 					style={styles.input}
 					placeholder="Search"
-						placeholderTextColor="grey"
+					placeholderTextColor="grey"
 					/>
 					{this.state.text ?
 					<TouchableWithoutFeedback onPress={() => this.deleteData()}>
@@ -72,7 +76,7 @@ class Search extends Component {
 						/>
 					</TouchableWithoutFeedback>
 					: null }
-					<TouchableWithoutFeedback style={styles.cancerButton}>
+					<TouchableWithoutFeedback style={styles.cancerButton} onPress={() => navigate('Home')}>
 						<View style={styles.containerButton}>
 							<Text style={styles.cancerButtonText}>Cancelar</Text>
 						</View>
@@ -89,6 +93,16 @@ class Search extends Component {
 				</ScrollView>
 			</View>
 		)
+	}
+}
+
+const mapStateToProps = state => {
+	return {dataTvMaze: state.dataTvMaze}
+}
+
+const mapDispatchToProps = dispatch => {
+	return {
+		fetchData: () => dispatch(fetchData())
 	}
 }
 
@@ -141,4 +155,4 @@ const styles = StyleSheet.create({
 	}
 })
 
-export default Search
+export default connect(mapStateToProps, mapDispatchToProps)(Search)
